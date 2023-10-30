@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pomodoro/pomodoro/provider.dart';
-import 'package:pomodoro/pomodoro/view.dart';
+import 'package:pomodoro/providers/pomodoro_provider.dart';
+import 'package:pomodoro/views/pomodoro_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -13,13 +13,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-  create: (BuildContext context) => PomodoroProvider(),
-  child: const MaterialApp(
-      title: 'Pomodoro App',
-      debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
-    ),
-);
+      create: (BuildContext context) => PomodoroProvider(),
+      child: const MaterialApp(
+        title: 'Pomodoro App',
+        debugShowCheckedModeBanner: false,
+        home: HomeScreen(),
+      ),
+    );
   }
 }
 
@@ -33,21 +33,29 @@ class HomeScreen extends StatelessWidget {
         title: const Text("Pomodoro App"),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const Text("This is Pomodoro App", style: TextStyle(fontSize: 24),),
-            const SizedBox(height: 15,),
-            ElevatedButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PomodoroPage())), child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              child: Center(
-                child: Text(
-                  "Pomodoro App"
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                "This is Pomodoro App", style: TextStyle(fontSize: 24),),
+              const SizedBox(height: 15,),
+              ElevatedButton(onPressed: () =>
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PomodoroPage())),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  child: Center(
+                    child: Text(
+                        "Pomodoro App"
+                    ),
+                  ),
                 ),
               ),
-            ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
