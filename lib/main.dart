@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
-import 'package:pomodoro/views/pomodoro_page.dart';
+import 'package:pomodoro/views/pomodoro_init_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {

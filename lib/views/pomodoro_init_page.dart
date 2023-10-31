@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/models/pomodoro_models.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
+import 'package:pomodoro/views/pomodoro_running_page.dart';
 import 'package:provider/provider.dart';
 
 class PomodoroPage extends StatelessWidget {
@@ -79,6 +80,7 @@ class PomodoroPage extends StatelessWidget {
                           return;
                         }
                         provider.initPomodoro(model);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => PomodoroRunningPage(model: model,)));
                       },
                       child: const Center(
                         child: Padding(
