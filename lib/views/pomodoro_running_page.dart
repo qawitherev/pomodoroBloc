@@ -66,7 +66,7 @@ class PomodoroRunningPage extends StatelessWidget {
                     Consumer<PomodoroProvider>(
                       builder: (context, provider, child) {
                         return Text(
-                          "Iteration: ${provider.model.iteration}",
+                          "Iteration Left: ${provider.model.iteration}",
                           style: const TextStyle(fontSize: 15),
                         );
                       },
@@ -75,12 +75,25 @@ class PomodoroRunningPage extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
-                child: const Center(
+                onPressed: () {
+                  if (!provider.isPaused) {
+                    provider.pause();
+                  } else if (provider.isPaused) {
+                    provider.resume();
+                  } else {
+                    throw UnimplementedError("No such thing");
+                  }
+                },
+                child: Center(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                    child: Text(
-                      "Pause",
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 15),
+                    child: Consumer<PomodoroProvider>(
+                      builder: (context, provider, child) {
+                        return Text(!provider.isPaused ?
+                        "Pause" : "Resume",
+                        );
+                      },
                     ),
                   ),
                 ),
