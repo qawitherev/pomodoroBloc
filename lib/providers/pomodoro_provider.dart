@@ -12,16 +12,38 @@ class PomodoroProvider extends ChangeNotifier {
   int _breakTime = 0;
   bool _isPaused = false;
   PomodoroState _state = PomodoroState.working;
+  int _selectedModelIndex = -1;
 
+  final _model0 =
+  PomodoroModel(workDuration: 25, shortBreakDuration: 5, iteration: 4);
+  final _model1 =
+  PomodoroModel(workDuration: 50, shortBreakDuration: 10, iteration: 2);
+  final _model2 =
+  PomodoroModel(workDuration: 45, shortBreakDuration: 5, iteration: 2);
 
   PomodoroModel get model => _model;
   int get workTime => _workTime;
   int get breakTime => _breakTime;
   bool get isPaused => _isPaused;
   PomodoroState get state => _state;
+  int get selectedModelIndex => _selectedModelIndex;
+  List<PomodoroModel> get modelList => [_model0, _model1, _model2];
 
   PomodoroProvider() {
     print("created");
+  }
+
+  void selectModel(int index) {
+    print("a");
+    if (_selectedModelIndex != -1 && _selectedModelIndex == index) {
+      print("b");
+      _selectedModelIndex = -1;
+      notifyListeners();
+    } else {
+      print("c");
+      _selectedModelIndex = index;
+      notifyListeners();
+    }
   }
 
   void initPomodoro(PomodoroModel model) {
