@@ -115,6 +115,20 @@ class PomodoroProvider extends ChangeNotifier {
     }
   }
 
+  void stopPomodoro() {
+    if (_state == PomodoroState.working) {
+      _workTimer?.cancel();
+      _state = PomodoroState.stopped;
+      notifyListeners();
+    } else if (_state == PomodoroState.shortBreak) {
+      _breakTimer?.cancel();
+      _state = PomodoroState.stopped;
+      notifyListeners();
+    } else {
+      throw UnimplementedError("No such thing");
+    }
+  }
+
   @Deprecated("Use startWorking()")
   void startTimer(int duration) {
     if (_workTimer != null) {
@@ -168,6 +182,7 @@ class PomodoroProvider extends ChangeNotifier {
     startTimer(_pauseTime);
   }
 
+  @Deprecated("Use stopPomodoro()")
   void stopTimer() {
     if (_workTimer == null) {
       print("timer is null, cannot reset timer");
@@ -193,4 +208,4 @@ class PomodoroProvider extends ChangeNotifier {
   }
 }
 
-enum PomodoroState { working, shortBreak, finished, paused }
+enum PomodoroState { working, shortBreak, finished, paused, stopped }

@@ -65,62 +65,30 @@ class PomodoroPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        int workDuration =
-                            int.tryParse(workDurationController.text) ?? 0;
-                        // print(provider)
-                        int breakDuration = int.tryParse(shortBreakDurationController.text) ?? 0;
-                        int iteration = int.tryParse(iterationController.text) ?? 0;
-                        final model = PomodoroModel(workDuration: workDuration, shortBreakDuration: breakDuration, iteration: iteration);
-                        if (workDuration == 0 || breakDuration ==0 || iteration==0) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cannot be 0"), duration: Duration(seconds: 2),));
-                          return;
-                        }
-                        provider.initPomodoro(model);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => PomodoroRunningPage(model: model,)));
-                      },
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 15),
-                          child: Text(
-                            "Start Pomodoro Session",
-                          ),
-                        ),
+                ElevatedButton(
+                  onPressed: () {
+                    int workDuration =
+                        int.tryParse(workDurationController.text) ?? 0;
+                    // print(provider)
+                    int breakDuration = int.tryParse(shortBreakDurationController.text) ?? 0;
+                    int iteration = int.tryParse(iterationController.text) ?? 0;
+                    final model = PomodoroModel(workDuration: workDuration, shortBreakDuration: breakDuration, iteration: iteration);
+                    if (workDuration == 0 || breakDuration ==0 || iteration==0) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cannot be 0"), duration: Duration(seconds: 2),));
+                      return;
+                    }
+                    provider.initPomodoro(model);
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PomodoroRunningPage(model: model,)));
+                  },
+                  child: const Center(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 15),
+                      child: Text(
+                        "Start Pomodoro Session",
                       ),
                     ),
-                    vertBox,
-                    ElevatedButton(
-                      onPressed: () => provider.pauseTimer(),
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 15),
-                          child: Text(
-                            "Pause Timer",
-                          ),
-                        ),
-                      ),
-                    ),
-                    vertBox,
-                    ElevatedButton(
-                      onPressed: () {
-                        provider.stopTimer();
-                      },
-                      child: const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 15),
-                          child: Text(
-                            "Reset Timer",
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 )
               ],
             ),

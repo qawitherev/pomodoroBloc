@@ -33,90 +33,124 @@ class PomodoroRunningPage extends StatelessWidget {
         title: const Text("Pomodoro"),
         centerTitle: true,
       ),
-      body: provider.state != PomodoroState.finished ? Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            children: [
-              Expanded(
+      body: provider.state != PomodoroState.finished
+          ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(
-                      height: 20,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Consumer<PomodoroProvider>(
+                            builder: (context, provider, child) {
+                              return Text(
+                                provider.state == PomodoroState.working
+                                    ? "${provider.workTime}"
+                                    : "${provider.breakTime}",
+                                style: const TextStyle(fontSize: 30),
+                              );
+                            },
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            stateString,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Consumer<PomodoroProvider>(
+                            builder: (context, provider, child) {
+                              return Text(
+                                "Iteration Left: ${provider.model.iteration}",
+                                style: const TextStyle(fontSize: 15),
+                              );
+                            },
+                          )
+                        ],
+                      ),
                     ),
-                    Consumer<PomodoroProvider>(
-                      builder: (context, provider, child) {
-                        return Text(
-                          provider.state == PomodoroState.working
-                              ? "${provider.workTime}"
-                              : "${provider.breakTime}",
-                          style: const TextStyle(fontSize: 30),
-                        );
-                      },
+                    Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            if (!provider.isPaused) {
+                              provider.pause();
+                            } else if (provider.isPaused) {
+                              provider.resume();
+                            } else {
+                              throw UnimplementedError("No such thing");
+                            }
+                          },
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 15),
+                              child: Consumer<PomodoroProvider>(
+                                builder: (context, provider, child) {
+                                  return Text(
+                                    !provider.isPaused ? "Pause" : "Resume",
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            provider.stopPomodoro();
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Pomodoro Stopped")));
+                          },
+                          child: const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 15),
+                              child: Text(
+                                "Stop Pomodoro",
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      stateString,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(height: 10,),
-                    Consumer<PomodoroProvider>(
-                      builder: (context, provider, child) {
-                        return Text(
-                          "Iteration Left: ${provider.model.iteration}",
-                          style: const TextStyle(fontSize: 15),
-                        );
-                      },
-                    )
                   ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  if (!provider.isPaused) {
-                    provider.pause();
-                  } else if (provider.isPaused) {
-                    provider.resume();
-                  } else {
-                    throw UnimplementedError("No such thing");
-                  }
-                },
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 15),
-                    child: Consumer<PomodoroProvider>(
-                      builder: (context, provider, child) {
-                        return Text(!provider.isPaused ?
-                        "Pause" : "Resume",
-                        );
-                      },
-                    ),
+            )
+          : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Pomodoro Finished",
+                    style: TextStyle(fontSize: 30),
                   ),
-                ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                        child: Text("Do Again"),
+                      ))
+                ],
               ),
-            ],
-          ),
-        ),
-      ) :
-      Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Pomodoro Finished", style: TextStyle(fontSize: 30),),
-            const SizedBox(height: 30,),
-            ElevatedButton(onPressed: () {
-              Navigator.pop(context);
-            }, child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-              child: Text("Do Again"),
-            ))
-          ],
-        ),
-      ),
+            ),
     );
   }
 }
