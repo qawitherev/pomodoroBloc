@@ -33,15 +33,17 @@ class PomodoroProvider extends ChangeNotifier {
 
   void startWorking() {
     print("iteration ${_model.iteration}");
-    _workTime = _model.workDuration;
-    _breakTime = _model.shortBreakDuration;
+    if (_pauseTime == 0) {
+      _workTime = _model.workDuration;
+      _breakTime = _model.shortBreakDuration;
+    }
     _workTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_pauseTime >0) {
         _workTime = _pauseTime;
         _workTime--;
+        notifyListeners();
         _pauseTime =0;
-      }
-      else if (_workTime < 1 && _model.iteration < 2) {
+      } else if (_workTime < 1 && _model.iteration < 2) {
         _workTimer?.cancel();
         print("Pomodoro finished");
         _state = PomodoroState.finished;
@@ -61,10 +63,16 @@ class PomodoroProvider extends ChangeNotifier {
 
   void startBreak() {
     _state = PomodoroState.shortBreak;
-    _breakTime--;
+    // _breakTime--;
     notifyListeners();
     _breakTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_breakTime < 1) {
+      if (_pauseTime>0) {
+        _breakTime = _pauseTime;
+        _breakTime--;
+        _pauseTime = 0;
+        notifyListeners();
+      }
+      else if (_breakTime < 1) {
         _breakTimer?.cancel();
         _model.iteration--;
         _state = PomodoroState.working;
@@ -85,9 +93,11 @@ class PomodoroProvider extends ChangeNotifier {
     if (_state == PomodoroState.working) {
       _pauseTime = _workTime;
       _workTimer?.cancel();
+      print("pausing while working");
     } else if (_state == PomodoroState.shortBreak) {
       _pauseTime = _breakTime;
       _breakTimer?.cancel();
+      print("pausing while break");
     } else {
       throw UnimplementedError("No such thing");
     }
@@ -97,8 +107,10 @@ class PomodoroProvider extends ChangeNotifier {
     _isPaused = false;
     notifyListeners();
     if (_state == PomodoroState.working) {
+      print("resume pause while working");
       startWorking();
     } else if (_state == PomodoroState.shortBreak) {
+      print("resume pause while break");
       startBreak();
     }
   }
