@@ -16,11 +16,6 @@ class Colours {
     900: Color.fromRGBO(136, 14, 79, 1),
   };
 
-  static const mCerulean = MaterialColor(0xFF2D728F, swatch);
-  static const appColour = MaterialColor(0xFF66BB6A, swatch);
-
-
-  //real shit here
   static const PRIMARY_COLOR = Color(0xFF7E57C2);
   static const PRIMARY_DARK_COLOR = Color(0xFF4527A0);
   static const PRIMARY_SWATCH = MaterialColor(0xFF7E57C2, swatch);

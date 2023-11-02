@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
 import 'package:pomodoro/providers/theme_provider.dart';
 import 'package:pomodoro/theme_stuff/default_theme.dart';
+import 'package:pomodoro/utils/our_contants.dart';
+import 'package:pomodoro/utils/shared_prefs.dart';
 import 'package:pomodoro/views/pomodoro_init_page.dart';
 import 'package:provider/provider.dart';
 
