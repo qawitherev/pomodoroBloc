@@ -17,6 +17,7 @@ class PomodoroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final width = MediaQuery.of(context).size.width;
+    final theme = Theme.of(context);
     final provider = Provider.of<PomodoroProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +45,9 @@ class PomodoroPage extends StatelessWidget {
                       ),
                       vertBox,
                       SizedBox(
-                        height: 130,
+                        height: 150,
                         child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             scrollDirection: Axis.horizontal,
                             itemCount: provider.modelList.length * 2 + 1,
                             itemBuilder: (BuildContext context, int index) {
@@ -59,7 +60,7 @@ class PomodoroPage extends StatelessWidget {
                                 final item = provider.modelList[index ~/ 2];
                                 final idx = index ~/ 2;
                                 return _pomodoroPreset(
-                                    context, item, idx, provider);
+                                    context, item, idx, provider, theme);
                               } else {
                                 return const SizedBox(
                                   width: 10,
@@ -124,7 +125,10 @@ class PomodoroPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (provider.selectedModelIndex != -1 && (workDurationController.text.isNotEmpty || shortBreakDurationController.text.isNotEmpty || iterationController.text.isNotEmpty)) {
+                    if (provider.selectedModelIndex != -1 &&
+                        (workDurationController.text.isNotEmpty ||
+                            shortBreakDurationController.text.isNotEmpty ||
+                            iterationController.text.isNotEmpty)) {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text("Please choose either preset"),
                         duration: Duration(seconds: 2),
@@ -139,11 +143,13 @@ class PomodoroPage extends StatelessWidget {
                       // print(provider)
                       int breakDuration =
                           int.tryParse(shortBreakDurationController.text) ?? 0;
-                      int iteration = int.tryParse(iterationController.text) ?? 0;
+                      int iteration =
+                          int.tryParse(iterationController.text) ?? 0;
                       if (workDuration == 0 ||
                           breakDuration == 0 ||
                           iteration == 0) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
                           content: Text("Cannot be 0"),
                           duration: Duration(seconds: 2),
                         ));
@@ -184,31 +190,46 @@ class PomodoroPage extends StatelessWidget {
   }
 
   _pomodoroPreset(BuildContext context, PomodoroModel item, int idx,
-      PomodoroProvider provider) {
-    final h1 = TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: provider.selectedModelIndex == idx ? Colors.white: Colors.black);
+      PomodoroProvider provider, ThemeData theme) {
+    final h1 = TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: _getContainerTextColor(provider, idx, theme, context),
+    );
     return GestureDetector(
       onTap: () => provider.selectModel(idx),
       child: Consumer<PomodoroProvider>(
         builder: (context, provider, child) {
           return Container(
             width: 200,
-            height: 130,
+            height: 150,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: provider.selectedModelIndex != idx ? Colors.transparent : Colors.blue,
+              color: provider.selectedModelIndex != idx
+                  ? Colors.transparent
+                  : theme.primaryColor,
               border: Border.all(color: Colors.grey),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Preset #${idx+1}", style: h1),
+                Text("Preset #${idx + 1}", style: h1),
                 const SizedBox(
                   height: 10,
                 ),
-                Text("Work Duration: ${item.workDuration} min", style: h1.copyWith(fontSize: 14),),
-                Text("Break Duration: ${item.shortBreakDuration} min", style: h1.copyWith(fontSize: 14),),
-                Text("Iteration: ${item.iteration}", style: h1.copyWith(fontSize: 14),),
+                Text(
+                  "Work Duration: ${item.workDuration} min",
+                  style: h1.copyWith(fontSize: 14),
+                ),
+                Text(
+                  "Break Duration: ${item.shortBreakDuration} min",
+                  style: h1.copyWith(fontSize: 14),
+                ),
+                Text(
+                  "Iteration: ${item.iteration}",
+                  style: h1.copyWith(fontSize: 14),
+                ),
               ],
             ),
           );
@@ -216,6 +237,19 @@ class PomodoroPage extends StatelessWidget {
       ),
     );
   }
-}
 
-//TODO: handle when already tap preset, but want to choose own preset
+  Color _getContainerTextColor(PomodoroProvider provider, int index, ThemeData theme, BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+    if (brightness == Brightness.light) {
+      if (provider.selectedModelIndex == index) {
+        return Colors.white;
+      } else {
+        return Colors.black;
+      }
+    } else if (brightness == Brightness.dark) {
+      return Colors.white;
+    } else {
+      throw UnimplementedError("No Color");
+    }
+  }
+}

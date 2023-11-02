@@ -34,13 +34,10 @@ class PomodoroProvider extends ChangeNotifier {
   }
 
   void selectModel(int index) {
-    print("a");
     if (_selectedModelIndex != -1 && _selectedModelIndex == index) {
-      print("b");
       _selectedModelIndex = -1;
       notifyListeners();
     } else {
-      print("c");
       _selectedModelIndex = index;
       notifyListeners();
     }
