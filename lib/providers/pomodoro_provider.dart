@@ -136,10 +136,12 @@ class PomodoroProvider extends ChangeNotifier {
 
   void stopPomodoro() {
     if (_state == PomodoroState.working) {
+      _isPaused = false;
       _workTimer?.cancel();
       _state = PomodoroState.stopped;
       notifyListeners();
     } else if (_state == PomodoroState.shortBreak) {
+      _isPaused = false;
       _breakTimer?.cancel();
       _state = PomodoroState.stopped;
       notifyListeners();
