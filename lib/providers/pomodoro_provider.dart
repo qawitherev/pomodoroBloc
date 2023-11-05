@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:pomodoro/models/pomodoro_models.dart';
+import 'package:pomodoro/utils/our_contants.dart';
+import 'package:pomodoro/utils/shared_prefs.dart';
 
 class PomodoroProvider extends ChangeNotifier {
   PomodoroModel _model = PomodoroModel();
@@ -13,13 +16,15 @@ class PomodoroProvider extends ChangeNotifier {
   bool _isPaused = false;
   PomodoroState _state = PomodoroState.working;
   int _selectedModelIndex = -1;
+  final List<PomodoroModel> _modelList = [];
 
+  //TODO: might want to store this somewhere else, e.g. repo
   final _model0 =
-  PomodoroModel(workDuration: 25, shortBreakDuration: 5, iteration: 4);
+  PomodoroModel(name: "Preset #1", workDuration: 25, shortBreakDuration: 5, iteration: 4);
   final _model1 =
-  PomodoroModel(workDuration: 50, shortBreakDuration: 10, iteration: 2);
+  PomodoroModel(name: "Preset #2", workDuration: 50, shortBreakDuration: 10, iteration: 2);
   final _model2 =
-  PomodoroModel(workDuration: 45, shortBreakDuration: 5, iteration: 2);
+  PomodoroModel(name: "Preset #3", workDuration: 45, shortBreakDuration: 5, iteration: 2);
 
   PomodoroModel get model => _model;
   int get workTime => _workTime;
@@ -27,10 +32,21 @@ class PomodoroProvider extends ChangeNotifier {
   bool get isPaused => _isPaused;
   PomodoroState get state => _state;
   int get selectedModelIndex => _selectedModelIndex;
-  List<PomodoroModel> get modelList => [_model0, _model1, _model2];
+  List<PomodoroModel> get modelList => _modelList;
 
   PomodoroProvider() {
-    print("created");
+    providerInit();
+  }
+
+  Future<void> providerInit() async {
+    _modelList.add(_model0);
+    _modelList.add(_model1);
+    _modelList.add(_model2);
+    final savedModel = await getSavedPomodoroPreset();
+    if (savedModel != null) {
+      _modelList.add(savedModel);
+    }
+    notifyListeners();
   }
 
   void selectModel(int index) {
@@ -148,6 +164,49 @@ class PomodoroProvider extends ChangeNotifier {
     } else {
       throw UnimplementedError("No such thing");
     }
+  }
+
+  Future<bool> addPomodoroPreset(PomodoroModel model) async {
+    const key = PomodoroModelConstants.modelKey;
+    final modelMap = model.toMap();
+    final modelJson = jsonEncode(modelMap);
+    if (await SharedPrefs.isExist(key)) {
+      return false; //if false, meaning already has model stored
+    } else {
+      final res = await SharedPrefs.saveSharedPrefs(key, SharedPrefsType.string, modelJson);
+      if (!res) {
+        throw Error();
+      }
+      _modelList.add(model);
+      notifyListeners();
+      return res;
+    }
+  }
+
+  Future<PomodoroModel?> getSavedPomodoroPreset() async {
+    const key = PomodoroModelConstants.modelKey;
+    if (!await SharedPrefs.isExist(key)) {
+      return null;
+    } else {
+      final modelJson = await SharedPrefs.readSharedPrefs(key, SharedPrefsType.string);
+      final modelMap = jsonDecode(modelJson);
+      return PomodoroModel.fromMap(modelMap);
+    }
+  }
+
+  Future<bool> deleteSavedPreset() async {
+    const key = PomodoroModelConstants.modelKey;
+    final isExist = await SharedPrefs.isExist(key);
+    if (!isExist) {
+      throw Error();
+    }
+    final res = await SharedPrefs.deleteSharedPrefs(key);
+    if (!res) {
+      throw Error();
+    }
+    _modelList.removeLast();
+    notifyListeners();
+    return res;
   }
 
   @Deprecated("Use startWorking()")

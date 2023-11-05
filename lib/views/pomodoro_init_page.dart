@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pomodoro/models/pomodoro_models.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
+import 'package:pomodoro/views/pomodoro_add_page.dart';
 import 'package:pomodoro/views/pomodoro_running_page.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +27,7 @@ class PomodoroPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Center(
           child: Column(
             children: [
@@ -46,27 +48,30 @@ class PomodoroPage extends StatelessWidget {
                       vertBox,
                       SizedBox(
                         height: 150,
-                        child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: provider.modelList.length * 2 + 1,
-                            itemBuilder: (BuildContext context, int index) {
-                              if (index == 0 ||
-                                  index == provider.modelList.length * 2) {
-                                return const SizedBox(
-                                  width: 10,
-                                );
-                              } else if (index.isOdd) {
-                                final item = provider.modelList[index ~/ 2];
-                                final idx = index ~/ 2;
-                                return _pomodoroPreset(
-                                    context, item, idx, provider, theme);
-                              } else {
-                                return const SizedBox(
-                                  width: 10,
-                                );
-                              }
-                            }),
+                        // child: ListView(
+                        //   scrollDirection: Axis.horizontal,
+                        //   children: _getPresetHorizontalList(context, provider, theme),
+                        // ),
+                        child: Consumer<PomodoroProvider>(
+                          builder: (context, provider, child) {
+                            return FutureBuilder<List<Widget>>(
+                              future: _getPresetHorizontalList(
+                                  context, provider, theme),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<Widget>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    physics: const BouncingScrollPhysics(),
+                                    children: snapshot.data!,
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              },
+                            );
+                          },
+                        ),
                       ),
                       vertBox,
                       const Padding(
@@ -192,11 +197,12 @@ class PomodoroPage extends StatelessWidget {
   _pomodoroPreset(BuildContext context, PomodoroModel item, int idx,
       PomodoroProvider provider, ThemeData theme) {
     final h1 = TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: _getContainerTextColor(provider, idx, theme, context),
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: _getContainerTextColor(provider, idx, theme, context),
     );
     return GestureDetector(
+      onLongPress: () => _deleteSavedPreset(context, item, provider),
       onTap: () => provider.selectModel(idx),
       child: Consumer<PomodoroProvider>(
         builder: (context, provider, child) {
@@ -214,7 +220,11 @@ class PomodoroPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Preset #${idx + 1}", style: h1),
+                Text(
+                  item.name,
+                  style: h1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -238,7 +248,8 @@ class PomodoroPage extends StatelessWidget {
     );
   }
 
-  Color _getContainerTextColor(PomodoroProvider provider, int index, ThemeData theme, BuildContext context) {
+  Color _getContainerTextColor(PomodoroProvider provider, int index,
+      ThemeData theme, BuildContext context) {
     final brightness = Theme.of(context).brightness;
     if (brightness == Brightness.light) {
       if (provider.selectedModelIndex == index) {
@@ -251,5 +262,105 @@ class PomodoroPage extends StatelessWidget {
     } else {
       throw UnimplementedError("No Color");
     }
+  }
+
+  Future<List<Widget>> _getPresetHorizontalList(
+      BuildContext context, PomodoroProvider provider, ThemeData theme) async {
+    final theList = <Widget>[];
+    List.generate(provider.modelList.length * 2, (index) {
+      if (index == 0) {
+        theList.add(const SizedBox(
+          width: 10,
+        ));
+      } else if (index.isOdd) {
+        final item = provider.modelList[index ~/ 2];
+        final idx = index ~/ 2;
+        theList.add(_pomodoroPreset(context, item, idx, provider, theme));
+      } else if (index.isEven) {
+        theList.add(const SizedBox(
+          width: 8,
+        ));
+      } else {
+        throw RangeError("Index doesn't exist");
+      }
+    });
+    //TODO: add the add button here
+    final addContainer = GestureDetector(
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => PomodoroAddPage())),
+      child: Container(
+        width: 200,
+        height: 150,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.transparent,
+          border: Border.all(color: Colors.grey),
+        ),
+        child: Center(
+          child: SvgPicture.asset(
+            "assets/ic_add_preset.svg",
+            color: theme.brightness == Brightness.light
+                ? Colors.black
+                : Colors.white,
+          ),
+        ),
+      ),
+    );
+    theList.add(const SizedBox(
+      width: 8,
+    ));
+    if (await provider.getSavedPomodoroPreset() == null) {
+      theList.add(addContainer);
+    }
+    theList.add(const SizedBox(
+      width: 10,
+    ));
+    return theList;
+  }
+
+  void _deleteSavedPreset(BuildContext context, PomodoroModel model,
+      PomodoroProvider provider) async {
+    if (model.name == "Preset #1" ||
+        model.name == "Preset #2" ||
+        model.name == "Preset #3") {
+      return;
+    }
+    _showDialog(context, model, provider);
+  }
+
+  void _showDialog(
+      BuildContext context, PomodoroModel model, PomodoroProvider provider) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          // return Dialog(
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+          //     child: Column(
+          //       mainAxisSize: MainAxisSize.min,
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Text("Are you sure you want to delete ${model.name}?", textAlign: TextAlign.center, style: const TextStyle(fontSize: 18),)
+          //       ],
+          //     ),
+          //   ),
+          // );
+          return AlertDialog(
+            title: Text("Delete ${model.name}?"),
+            content: const Text("This action is irreversible"),
+            actions: [
+              FilledButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancel")),
+              FilledButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    provider.deleteSavedPreset();
+                  },
+                  child: const Text("Delete")),
+            ],
+          );
+        });
   }
 }
