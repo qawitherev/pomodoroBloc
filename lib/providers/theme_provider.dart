@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pomodoro/utils/our_contants.dart';
+import 'package:pomodoro/utils/our_constants.dart';
 import 'package:pomodoro/utils/shared_prefs.dart';
 
 class ThemeProvider with ChangeNotifier {

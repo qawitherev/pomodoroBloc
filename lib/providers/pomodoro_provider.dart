@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:pomodoro/models/pomodoro_models.dart';
-import 'package:pomodoro/utils/our_contants.dart';
+import 'package:pomodoro/utils/our_constants.dart';
 import 'package:pomodoro/utils/shared_prefs.dart';
 
-class PomodoroProvider extends ChangeNotifier {
+class PomodoroProvider extends ChangeNotifier with WidgetsBindingObserver {
   PomodoroModel _model = PomodoroModel();
   Timer? _workTimer;
   Timer? _breakTimer;
@@ -17,6 +17,7 @@ class PomodoroProvider extends ChangeNotifier {
   PomodoroState _state = PomodoroState.working;
   int _selectedModelIndex = -1;
   final List<PomodoroModel> _modelList = [];
+  AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
 
   //TODO: might want to store this somewhere else, e.g. repo
   final _model0 =
@@ -33,12 +34,14 @@ class PomodoroProvider extends ChangeNotifier {
   PomodoroState get state => _state;
   int get selectedModelIndex => _selectedModelIndex;
   List<PomodoroModel> get modelList => _modelList;
+  AppLifecycleState get appLifecycleState => _appLifecycleState;
 
   PomodoroProvider() {
     providerInit();
   }
 
   Future<void> providerInit() async {
+    WidgetsBinding.instance.addObserver(this);
     _modelList.add(_model0);
     _modelList.add(_model1);
     _modelList.add(_model2);
@@ -59,6 +62,7 @@ class PomodoroProvider extends ChangeNotifier {
     }
   }
 
+  //pomodoro timer stuff
   void initPomodoro(PomodoroModel model) {
     _model = model;
     _state = PomodoroState.working;
@@ -165,7 +169,9 @@ class PomodoroProvider extends ChangeNotifier {
       throw UnimplementedError("No such thing");
     }
   }
+  //end of pomodoro timer stuff
 
+  //saved preset logic
   Future<bool> addPomodoroPreset(PomodoroModel model) async {
     const key = PomodoroModelConstants.modelKey;
     final modelMap = model.toMap();
@@ -208,73 +214,17 @@ class PomodoroProvider extends ChangeNotifier {
     notifyListeners();
     return res;
   }
+  //end of saved preset logic
 
-  @Deprecated("Use startWorking()")
-  void startTimer(int duration) {
-    if (_workTimer != null) {
-      print("timer is already running!");
-      return;
-    }
-    if (_pauseTime > 0) {
-      _workTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (_model.workDuration < 1) {
-          _workTimer?.cancel();
-          _workTimer = null;
-        } else {
-          _model.workDuration--;
-          print("timer: ${_model.workDuration}");
-          notifyListeners();
-        }
-      });
-    } else {
-      _model.workDuration = duration;
-      _workTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (_model.workDuration < 1) {
-          _workTimer?.cancel();
-          _workTimer = null;
-          _pauseTime = 0;
-          notifyListeners();
-        } else {
-          _model.workDuration--;
-          print("timer: ${_model.workDuration}");
-          notifyListeners();
-        }
-      });
-    }
-  }
-
-  @Deprecated("Use pause()")
-  void pauseTimer() {
-    if (_workTimer == null) {
-      print("timer is null, paused timer cannot be executed");
-      return;
-    }
-    if (_workTimer != null && _workTimer!.isActive) {
-      _pauseTime = _model.workDuration;
-      print("paused, paused time: $_pauseTime");
-      _workTimer?.cancel();
-      notifyListeners();
-    }
-  }
-
-  @Deprecated("Use resume()")
-  void resumeTimer() {
-    startTimer(_pauseTime);
-  }
-
-  @Deprecated("Use stopPomodoro()")
-  void stopTimer() {
-    if (_workTimer == null) {
-      print("timer is null, cannot reset timer");
-      return;
-    }
-    _workTimer?.cancel();
-    _workTimer = null;
-    print("timer stopped, timer null");
-    _model.workDuration = 0;
-    _pauseTime = 0;
+  //app lifecycle stuff
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    _appLifecycleState = state;
     notifyListeners();
+    print("appLifecycleState is $_appLifecycleState");
   }
+
+  //end of app lifecycle stuff
 
   @override
   void dispose() {

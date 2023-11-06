@@ -37,12 +37,12 @@ class PomodoroPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: Text(
                           "Choose Your Preferred Pomodoro Preset",
                           style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                              fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onBackground),
                         ),
                       ),
                       vertBox,
@@ -200,6 +200,7 @@ class PomodoroPage extends StatelessWidget {
       fontSize: 18,
       fontWeight: FontWeight.bold,
       color: _getContainerTextColor(provider, idx, theme, context),
+      // color: Theme.of(context).colorScheme.onPrimaryContainer
     );
     return GestureDetector(
       onLongPress: () => _deleteSavedPreset(context, item, provider),
@@ -214,7 +215,7 @@ class PomodoroPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: provider.selectedModelIndex != idx
                   ? Colors.transparent
-                  : theme.primaryColor,
+                  : theme.colorScheme.primary,
               border: Border.all(color: Colors.grey),
             ),
             child: Column(
@@ -250,17 +251,22 @@ class PomodoroPage extends StatelessWidget {
 
   Color _getContainerTextColor(PomodoroProvider provider, int index,
       ThemeData theme, BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    if (brightness == Brightness.light) {
-      if (provider.selectedModelIndex == index) {
-        return Colors.white;
-      } else {
-        return Colors.black;
-      }
-    } else if (brightness == Brightness.dark) {
-      return Colors.white;
+    // final brightness = Theme.of(context).brightness;
+    // if (brightness == Brightness.light) {
+    //   if (provider.selectedModelIndex == index) {
+    //     return Colors.white;
+    //   } else {
+    //     return Colors.black;
+    //   }
+    // } else if (brightness == Brightness.dark) {
+    //   return Colors.white;
+    // } else {
+    //   throw UnimplementedError("No Color");
+    // }
+    if (provider.selectedModelIndex == index) {
+      return Theme.of(context).colorScheme.onPrimary;
     } else {
-      throw UnimplementedError("No Color");
+      return Theme.of(context).colorScheme.onPrimaryContainer;
     }
   }
 
@@ -334,18 +340,6 @@ class PomodoroPage extends StatelessWidget {
     showDialog(
         context: context,
         builder: (BuildContext context) {
-          // return Dialog(
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-          //     child: Column(
-          //       mainAxisSize: MainAxisSize.min,
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text("Are you sure you want to delete ${model.name}?", textAlign: TextAlign.center, style: const TextStyle(fontSize: 18),)
-          //       ],
-          //     ),
-          //   ),
-          // );
           return AlertDialog(
             title: Text("Delete ${model.name}?"),
             content: const Text("This action is irreversible"),

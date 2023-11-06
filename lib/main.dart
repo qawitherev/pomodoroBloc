@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
 import 'package:pomodoro/providers/theme_provider.dart';
 import 'package:pomodoro/theme_stuff/default_theme.dart';
-import 'package:pomodoro/utils/our_contants.dart';
+import 'package:pomodoro/utils/our_constants.dart';
 import 'package:pomodoro/utils/shared_prefs.dart';
 import 'package:pomodoro/views/pomodoro_init_page.dart';
+import 'package:pomodoro/views/settings_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   // runApp(MyApp());
-  runApp(
-    MultiProvider(providers: [
+  runApp(MultiProvider(
+    providers: [
       ChangeNotifierProvider<PomodoroProvider>(
           create: (_) => PomodoroProvider()),
       ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider())
-    ], child: const MyApp(),)
-  ); 
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -64,31 +66,49 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "This is Pomodoro App", style: TextStyle(fontSize: 24),),
-              const SizedBox(height: 15,),
-              ElevatedButton(onPressed: () =>
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PomodoroPage())),
+                "This is Pomodoro App",
+                style: TextStyle(fontSize: 24),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => PomodoroPage())),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   child: Center(
-                    child: Text(
-                        "Pomodoro App"
-                    ),
+                    child: Text("Pomodoro App"),
                   ),
                 ),
               ),
-              const SizedBox(height: 15,),
-              ElevatedButton(onPressed: () => provider.toggleTheme(),
+              const SizedBox(
+                height: 15,
+              ),
+              ElevatedButton(
+                onPressed: () => provider.toggleTheme(),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   child: Center(
                     child: Text(
-                        !provider.isDark ? "Change to Dark" : "Change to Light",
+                      !provider.isDark ? "Change to Dark" : "Change to Light",
                     ),
                   ),
                 ),
               ),
+              const SizedBox(
+                height: 15,
+              ),
+              ElevatedButton(
+                  onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SettingsPage())),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                    child: Center(child: Text("Settings")),
+                  ))
             ],
           ),
         ),
@@ -96,5 +116,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-
