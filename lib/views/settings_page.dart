@@ -33,3 +33,10 @@ class SettingsPage extends StatelessWidget {
     );
   }
 }
+/*
+settings
+1. theme mode
+2. language
+3. color? -> disputable
+4. about
+ */

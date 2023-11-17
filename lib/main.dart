@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
     final provider = Provider.of<ThemeProvider>(context);
     return MaterialApp(
       theme: defaultTheme,
-      darkTheme: darkTheme,
+      darkTheme: defaultDarkTheme,
       themeMode: provider.themeMode,
       title: 'Pomodoro App',
       debugShowCheckedModeBanner: false,
