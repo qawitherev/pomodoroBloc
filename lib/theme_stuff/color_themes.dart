@@ -51,11 +51,6 @@ ThemeData defaultTheme = ThemeData(
 
 ThemeData defaultDarkTheme = ThemeData(
     brightness: Brightness.dark,
-    // primaryColor: Colours.PRIMARY_DARK_COLOR,
-    // primarySwatch: Colours.PRIMARY_DARK_SWATCH,
-    // appBarTheme: const AppBarTheme(
-    //   backgroundColor: Colours.PRIMARY_DARK_COLOR,
-    // ),
     useMaterial3: true,
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,

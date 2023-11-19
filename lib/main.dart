@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
 import 'package:pomodoro/providers/settings_provider.dart';
 import 'package:pomodoro/theme_stuff/color_themes.dart';
+import 'package:pomodoro/views/common_artefacts.dart';
 import 'package:pomodoro/views/pomodoro_init_page.dart';
 import 'package:pomodoro/views/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -56,9 +57,7 @@ class HomeScreen extends StatelessWidget {
                 "This is Pomodoro App",
                 style: TextStyle(fontSize: 24),
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              const Vertical15(),
               ElevatedButton(
                 onPressed: () => Navigator.push(context,
                     MaterialPageRoute(builder: (context) => PomodoroPage())),
@@ -69,9 +68,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              const Vertical15(),
               ElevatedButton(
                   onPressed: () => Navigator.push(
                       context,
