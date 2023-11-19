@@ -26,24 +26,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     return MaterialApp(
-      theme: defaultTheme,
-      darkTheme: defaultDarkTheme,
+      theme: settingsProvider.lightTheme,
+      darkTheme: settingsProvider.darkTheme,
       themeMode: settingsProvider.themeMode,
       title: 'Pomodoro App',
       debugShowCheckedModeBanner: false,
       home: const HomeScreen(),
     );
-    // return ChangeNotifierProvider(
-    //   create: (BuildContext context) => PomodoroProvider(),
-    //   child: MaterialApp(
-    //     theme: defaultTheme,
-    //     darkTheme: darkTheme,
-    //     themeMode: ,
-    //     title: 'Pomodoro App',
-    //     debugShowCheckedModeBanner: false,
-    //     home: const HomeScreen(),
-    //   ),
-    // );
   }
 }
 
