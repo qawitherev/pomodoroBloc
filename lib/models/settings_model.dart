@@ -11,5 +11,5 @@ class Settings {
     this.isDark = true,
     this.language = "en",
     this.themeColor,
-});
+  });
 }

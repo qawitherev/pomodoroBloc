@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
-import 'package:pomodoro/providers/theme_provider.dart';
-import 'package:pomodoro/theme_stuff/default_theme.dart';
-import 'package:pomodoro/utils/our_constants.dart';
-import 'package:pomodoro/utils/shared_prefs.dart';
+import 'package:pomodoro/providers/settings_provider.dart';
+import 'package:pomodoro/theme_stuff/color_themes.dart';
 import 'package:pomodoro/views/pomodoro_init_page.dart';
 import 'package:pomodoro/views/settings_page.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +12,8 @@ void main() {
     providers: [
       ChangeNotifierProvider<PomodoroProvider>(
           create: (_) => PomodoroProvider()),
-      ChangeNotifierProvider<ThemeProvider>(create: (_) => ThemeProvider())
+      ChangeNotifierProvider<SettingsProvider>(
+          create: (_) => SettingsProvider()),
     ],
     child: const MyApp(),
   ));
@@ -25,11 +24,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ThemeProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return MaterialApp(
       theme: defaultTheme,
       darkTheme: defaultDarkTheme,
-      themeMode: provider.themeMode,
+      themeMode: settingsProvider.themeMode,
       title: 'Pomodoro App',
       debugShowCheckedModeBanner: false,
       home: const HomeScreen(),
@@ -53,7 +52,6 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pomodoro App"),
@@ -79,21 +77,6 @@ class HomeScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   child: Center(
                     child: Text("Pomodoro App"),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              ElevatedButton(
-                onPressed: () => provider.toggleTheme(),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                  child: Center(
-                    child: Text(
-                      !provider.isDark ? "Change to Dark" : "Change to Light",
-                    ),
                   ),
                 ),
               ),

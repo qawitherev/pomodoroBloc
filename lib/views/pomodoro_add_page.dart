@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/models/pomodoro_models.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
-import 'package:pomodoro/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 
 class PomodoroAddPage extends StatelessWidget {
@@ -15,7 +14,6 @@ class PomodoroAddPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     final pomodoroProvider = Provider.of<PomodoroProvider>(context);
     return Scaffold(
       appBar: AppBar(
