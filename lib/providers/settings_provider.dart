@@ -10,6 +10,7 @@ class SettingsProvider extends ChangeNotifier {
   ThemeData _lightTheme = blueTheme;
   ThemeData _darkTheme = blueDarkTheme;
   ThemeMode _themeMode = ThemeMode.light;
+  int _selectedLanguageRadio = 0;
 
   get lang => _lang;
 
@@ -20,6 +21,8 @@ class SettingsProvider extends ChangeNotifier {
   get darkTheme => _darkTheme;
 
   get themeMode => _themeMode;
+
+  get selectedLanguageRadio => _selectedLanguageRadio;
 
   SettingsProvider() {
     initSettings();
@@ -134,6 +137,11 @@ class SettingsProvider extends ChangeNotifier {
           SettingsConstants.themeColor, SharedPrefsType.string);
       setThemeColor(Misc.stringToEnum(savedThemeColor, ColorTheme.values));
     }
+  }
+
+  void selectLanguageRadio(int value) {
+    _selectedLanguageRadio = value;
+    notifyListeners();
   }
 }
 
