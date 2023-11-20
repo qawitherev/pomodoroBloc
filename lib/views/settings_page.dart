@@ -12,7 +12,6 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final width = MediaQuery.of(context).size.width;
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
@@ -188,6 +187,26 @@ class SettingsPage extends StatelessWidget {
                   ],
                 ),
               ),
+              const Vertical20(),
+              const Text(
+                "About",
+                style: TextStyle(fontSize: 20),
+              ),
+              const Vertical15(),
+              CommonContainer10(child: RichText(
+                text: const TextSpan(
+                  children: [
+                    TextSpan(
+                        text: "Pomodoro App\n",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)
+                    ),
+                    TextSpan(
+                      text: "Developed by Qawi",
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ],
+                ),
+              ),),
             ],
           ),
         ),
@@ -197,6 +216,7 @@ class SettingsPage extends StatelessWidget {
 
   _showDialog(BuildContext context, SettingsProvider settingsProvider) {
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return Dialog(
@@ -240,9 +260,12 @@ class SettingsPage extends StatelessWidget {
                   ),
                   Align(
                     alignment: Alignment.topRight,
-                    child: TextButton(onPressed: () {
-                      Navigator.pop(context);
-                    }, child: const Text("Select"),),
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text("Select"),
+                    ),
                   ),
                 ],
               ),

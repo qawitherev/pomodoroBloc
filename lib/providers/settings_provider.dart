@@ -139,8 +139,19 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  void selectLanguageRadio(int value) {
+  void selectLanguageRadio(int value) async {
     _selectedLanguageRadio = value;
+    switch (value) {
+      case 0:
+        _lang = Language.en;
+        break;
+      case 1:
+        _lang = Language.ms;
+        break;
+      default:
+        throw UnimplementedError("Out of range");
+    }
+    await SharedPrefs.saveSharedPrefs(SettingsConstants.language, SharedPrefsType.string, _lang.name);
     notifyListeners();
   }
 }
