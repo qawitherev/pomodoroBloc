@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:pomodoro/providers/pomodoro_provider.dart';
 import 'package:pomodoro/providers/settings_provider.dart';
-import 'package:pomodoro/theme_stuff/color_themes.dart';
+import 'package:pomodoro/utils/local_notifications.dart';
 import 'package:pomodoro/views/common_artefacts.dart';
 import 'package:pomodoro/views/pomodoro_init_page.dart';
 import 'package:pomodoro/views/settings_page.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  // runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  LocalNotification().initLocalNotification();
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<PomodoroProvider>(

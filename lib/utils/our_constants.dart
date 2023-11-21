@@ -7,3 +7,8 @@ class SettingsConstants {
 class PomodoroModelConstants {
   static const modelKey = "com.abing.modelKey";
 }
+
+class NotificationConstants {
+  static const channelId = "0";
+  static const channelName = "com.abing.localNotification";
+}

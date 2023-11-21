@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:pomodoro/models/pomodoro_models.dart';
+import 'package:pomodoro/utils/local_notifications.dart';
 import 'package:pomodoro/utils/our_constants.dart';
 import 'package:pomodoro/utils/shared_prefs.dart';
 
@@ -63,11 +64,13 @@ class PomodoroProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   //pomodoro timer stuff
-  void initPomodoro(PomodoroModel model) {
+  void initPomodoro(PomodoroModel model) async {
     _model = model;
     _state = PomodoroState.working;
     print("init pomodoro, model received: $_model");
     startWorking();
+    await Future.delayed(const Duration(seconds: 5));
+    LocalNotification().showNotification();
   }
 
   void startWorking() {
